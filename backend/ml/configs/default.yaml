@@ -1,0 +1,75 @@
+# ═══════════════════════════════════════════════════════════
+# Experiment Config: Phase 5 Stable CPU Training
+# Optimized for small datasets on Apple Silicon (CPU-forced)
+# ═══════════════════════════════════════════════════════════
+
+experiment:
+  name: "phase5_bilstm_attention_v1"
+  description: "BiLSTM + Attention — CPU stable, small dataset"
+  version: "1.0.0"
+
+data:
+  processed_dir: "processed_data"
+  dataset_dir: "dataset"
+  seq_len: 150
+  stride: 30
+  features:
+    - ear
+    - gaze_pitch
+    - gaze_yaw
+    - head_pitch
+    - head_yaw
+    - head_roll
+    - eyebrow_tension
+    - eye_openness
+  n_features: 8
+  train_ratio: 0.70
+  val_ratio: 0.15
+  label_smoothing: 0.03
+  use_weighted_sampler: false   # too few samples for weighted sampler
+  seed: 42
+
+model:
+  arch: "bilstm_attention"
+  input_dim: 8
+  proj_dim: 64
+  hidden_dim: 64          # Smaller for tiny dataset (avoid overfit)
+  num_layers: 1           # Single layer for stability
+  bidirectional: true
+  use_attention: true
+  dropout: 0.20
+  head_dims: [128, 32, 1]
+
+training:
+  epochs: 150
+  batch_size: 16
+  optimizer: "adamw"
+  lr: 5.0e-5              # Much lower LR to avoid exploding gradients
+  weight_decay: 1.0e-3
+  betas: [0.9, 0.999]
+  grad_clip: 0.5          # Tighter clip for LSTM stability
+  huber_delta: 0.05
+  patience: 30
+  min_delta: 1.0e-5
+  warmup_ratio: 0.05
+  seed: 42
+  mixed_precision: false
+  force_cpu: true         # Force CPU even on MPS (avoids MPS LSTM instability)
+
+logging:
+  checkpoint_dir: "ml/checkpoints"
+  log_dir: "ml/logs"
+  tensorboard: true
+  csv_log: true
+  log_every_n_batches: 10
+  save_every_n_epochs: 25
+
+inference:
+  ema_alpha: 0.15
+  jitter_threshold: 5.0
+  min_face_confidence: 0.5
+  min_buffer_fill: 0.60
+  fatigue_gain: 0.002
+  fatigue_decay: 0.9995
+  baseline_window: 300
+  baseline_warmup: 60
