@@ -1,0 +1,29 @@
+# Phase 4 ML Training Dependencies
+# Run: pip install -r requirements_ml.txt
+
+# Core ML
+torch>=2.1.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+
+# Data processing
+pandas>=2.0.0
+scipy>=1.11.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Experiment tracking (optional but recommended)
+mlflow>=2.8.0
+
+# ONNX optimization (optional)
+onnx>=1.14.0
+onnxruntime>=1.16.0
+
+# Already in backend requirements (listed for reference)
+# fastapi
+# uvicorn
+# mediapipe
+# opencv-python
+# aiofiles
