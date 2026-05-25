@@ -14,17 +14,23 @@ import { useStore } from '../../store/useStore';
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-3 rounded-xl shadow-2xl">
-        <p className="text-[10px] font-black tracking-widest text-slate-500 uppercase mb-2">Neural Scan</p>
-        <div className="flex flex-col gap-1">
+      <div className="bg-[#0b0b0f]/95 backdrop-blur-xl border border-white/10 p-3 rounded-lg shadow-2xl">
+        <p className="text-[8px] font-black tracking-widest text-slate-500 uppercase mb-2">Neural Window Data</p>
+        <div className="flex flex-col gap-1.5 font-mono">
           <div className="flex items-center justify-between gap-6">
-            <span className="text-[10px] font-bold text-violet-400 uppercase tracking-wider">Load</span>
-            <span className="text-sm font-black text-white font-mono">{payload[0].value.toFixed(1)}%</span>
+            <span className="text-[9px] font-black text-[#a78bfa] uppercase">Cognitive Load</span>
+            <span className="text-xs font-black text-white">{payload[0]?.value?.toFixed(0)}%</span>
           </div>
           {payload[1] && (
             <div className="flex items-center justify-between gap-6">
-              <span className="text-[10px] font-bold text-rose-400 uppercase tracking-wider">Fatigue</span>
-              <span className="text-sm font-black text-white font-mono">{payload[1].value.toFixed(1)}%</span>
+              <span className="text-[9px] font-black text-[#fb7185] uppercase">Fatigue</span>
+              <span className="text-xs font-black text-white">{payload[1]?.value?.toFixed(0)}%</span>
+            </div>
+          )}
+          {payload[2] && (
+            <div className="flex items-center justify-between gap-6">
+              <span className="text-[9px] font-black text-[#10b981] uppercase">Attention</span>
+              <span className="text-xs font-black text-white">{payload[2]?.value?.toFixed(0)}%</span>
             </div>
           )}
         </div>
@@ -38,21 +44,25 @@ export default function TemporalLoadChart() {
   const chartData = useStore((state) => state.chartData);
 
   return (
-    <div className="w-full h-[240px]">
+    <div className="w-full h-[220px]">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <AreaChart data={chartData} margin={{ top: 15, right: 10, left: -22, bottom: 5 }}>
           <defs>
             <linearGradient id="colorLoad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
-              <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#a78bfa" stopOpacity={0.25}/>
+              <stop offset="95%" stopColor="#a78bfa" stopOpacity={0}/>
             </linearGradient>
             <linearGradient id="colorFatigue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.2}/>
-              <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#fb7185" stopOpacity={0.15}/>
+              <stop offset="95%" stopColor="#fb7185" stopOpacity={0}/>
+            </linearGradient>
+            <linearGradient id="colorAttention" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#10b981" stopOpacity={0.15}/>
+              <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
             </linearGradient>
           </defs>
           
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
           
           <XAxis 
             dataKey="time" 
@@ -63,31 +73,46 @@ export default function TemporalLoadChart() {
             domain={[0, 100]} 
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 9, fill: '#475569', fontWeight: 700 }}
+            tick={{ fontSize: 8, fill: '#475569', fontWeight: 900 }}
             tickFormatter={(val) => `${val}%`}
+            ticks={[0, 25, 50, 75, 100]}
           />
           
           <Tooltip content={<CustomTooltip />} />
           
-          <ReferenceLine y={80} stroke="#f43f5e" strokeDasharray="3 3" label={{ value: 'OVERLOAD', position: 'right', fill: '#f43f5e', fontSize: 8, fontWeight: 900 }} />
-          <ReferenceLine y={65} stroke="#eab308" strokeDasharray="3 3" label={{ value: 'HIGH', position: 'right', fill: '#eab308', fontSize: 8, fontWeight: 900 }} />
+          <ReferenceLine y={80} stroke="rgba(251, 113, 133, 0.4)" strokeDasharray="3 3" />
+          <ReferenceLine y={65} stroke="rgba(234, 179, 8, 0.3)" strokeDasharray="3 3" />
 
+          {/* Cognitive Load */}
           <Area 
             type="monotone" 
             dataKey="score" 
-            stroke="#8b5cf6" 
-            strokeWidth={3}
+            stroke="#a78bfa" 
+            strokeWidth={2}
             fillOpacity={1} 
             fill="url(#colorLoad)" 
             isAnimationActive={false}
           />
+          
+          {/* Fatigue */}
           <Area 
             type="monotone" 
             dataKey="fatigue" 
-            stroke="#f43f5e" 
-            strokeWidth={2}
+            stroke="#fb7185" 
+            strokeWidth={1.5}
             fillOpacity={1} 
             fill="url(#colorFatigue)" 
+            isAnimationActive={false}
+          />
+
+          {/* Attention */}
+          <Area 
+            type="monotone" 
+            dataKey="attention" 
+            stroke="#10b981" 
+            strokeWidth={1.5}
+            fillOpacity={1} 
+            fill="url(#colorAttention)" 
             isAnimationActive={false}
           />
         </AreaChart>
@@ -95,3 +120,4 @@ export default function TemporalLoadChart() {
     </div>
   );
 }
+

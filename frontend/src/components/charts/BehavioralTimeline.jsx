@@ -3,13 +3,13 @@ import { useStore } from '../../store/useStore';
 import { motion } from 'framer-motion';
 
 const STATE_COLORS = {
-  relaxed: '#10b981',
-  focused: '#3b82f6',
-  elevated: '#f59e0b',
-  overloaded: '#ef4444',
-  fatigued: '#8b5cf6',
-  recovering: '#06b6d4',
-  distracted: '#f97316',
+  relaxed: '#10b981',     // green
+  focused: '#10b981',     // green
+  elevated: '#eab308',    // yellow
+  overloaded: '#ef4444',  // red
+  fatigued: '#ef4444',    // red
+  recovering: '#06b6d4',  // cyan
+  distracted: '#f97316',  // orange
   unknown: '#475569'
 };
 

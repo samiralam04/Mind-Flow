@@ -10,10 +10,12 @@ export const useStore = create((set, get) => ({
   mlReady: false,
   
   // Real-time Current Values
-  cogLoad: 50,
+  cogLoad: 35,
   mlData: {},
   liveMetrics: {},
   sessionSummary: null,
+  framesProcessed: 0,
+  sessionStartTime: null,
   
   // Temporal History (for graphs)
   chartData: [], 
@@ -29,19 +31,36 @@ export const useStore = create((set, get) => ({
     mlReady: ready, 
     chartData: [], 
     alerts: [],
-    sessionSummary: null
+    sessionSummary: null,
+    framesProcessed: 0,
+    sessionStartTime: Date.now(),
+    cogLoad: 35
   }),
   stopSession: (summary) => set({ isStreaming: false, sessionId: null, sessionSummary: summary }),
   
   addFrameData: (data) => set((state) => {
     const now = Date.now();
     const score = Number(data.score);
+    const fatigueVal = data.ml?.fatigue != null ? data.ml.fatigue * 100 : 0;
+    
+    // Dynamic Attention Calculation
+    // Attention is high when focused, decreases during fatigue, extreme head movements or distraction.
+    let attentionVal = 100 - score;
+    if (data.ml?.state === 'distracted') attentionVal = 25;
+    else if (data.ml?.state === 'fatigued') attentionVal = 35;
+    else if (data.ml?.state === 'overloaded') attentionVal = 40;
+    
+    // Cap attention boundaries
+    attentionVal = Math.max(15, Math.min(95, attentionVal));
+
     const newPoint = {
       time: now,
       score: score,
       raw_load: data.ml?.raw_load != null ? data.ml.raw_load * 100 : score,
-      fatigue: data.ml?.fatigue != null ? data.ml.fatigue * 100 : 0,
+      fatigue: fatigueVal,
+      attention: attentionVal,
       state: data.ml?.state || 'unknown',
+      metrics: data.metrics || {}
     };
     
     // Downsample: add point every 200ms (5 FPS) for Recharts performance
@@ -73,7 +92,8 @@ export const useStore = create((set, get) => ({
       mlData: data.ml || {},
       liveMetrics: data.metrics || {},
       chartData: newHistory,
-      alerts: newAlerts
+      alerts: newAlerts,
+      framesProcessed: state.framesProcessed + 1
     };
   }),
 
@@ -81,3 +101,4 @@ export const useStore = create((set, get) => ({
     alerts: state.alerts.filter(a => a.id !== id)
   }))
 }));
+

@@ -1,19 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --bg-obsidian: #0a0a0c;
-  --bg-card: #121216;
-  --bg-header: #1a1a20;
-  --primary-neon: #8b5cf6;
+  --bg-obsidian: #070709;
+  --bg-card: rgba(18, 18, 22, 0.5);
+  --bg-card-hover: rgba(22, 22, 28, 0.65);
+  --border-dim: rgba(255, 255, 255, 0.035);
+  --border-bright: rgba(255, 255, 255, 0.07);
+  --primary-neon: #a78bfa;
   --secondary-neon: #06b6d4;
-  --accent-neon: #f43f5e;
+  --accent-neon: #fb7185;
+  --success-neon: #10b981;
   --text-pure: #ffffff;
   --text-dim: #94a3b8;
-  --border-dim: rgba(255, 255, 255, 0.1);
+  --text-dark: #475569;
 }
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -21,97 +26,154 @@ body {
   color: var(--text-pure);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
-  margin: 0;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.01);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Glassmorphic Styles */
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dim);
+  border-radius: 12px;
+  backdrop-filter: blur(16px);
+  padding: 1.25rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  position: relative;
   overflow: hidden;
 }
 
-.glass-card {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-dim);
-  border-radius: 1rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-  padding: 1.5rem;
-  transition: all 0.3s ease;
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
 }
 
 .glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  background-color: #16161c;
+  border-color: var(--border-bright);
+  background: var(--bg-card-hover);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+  transform: translateY(-1px);
 }
 
 .neo-button {
-  background-color: var(--primary-neon);
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
   color: white;
-  border: none;
-  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
   padding: 0.75rem 1.5rem;
-  font-weight: 900;
+  font-weight: 800;
+  font-size: 11px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
 }
 
 .neo-button:hover {
-  background-color: #a78bfa;
-  transform: scale(1.02);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4), 0 0 0 2px rgba(167, 139, 250, 0.2);
 }
 
 .neo-button:active {
-  transform: scale(0.98);
+  transform: translateY(1px);
 }
 
-/* Fallback for Tailwind utility failure */
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.flex-row { flex-direction: row; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.justify-center { justify-content: center; }
-.gap-2 { gap: 0.5rem; }
-.gap-4 { gap: 1rem; }
-.gap-6 { gap: 1.5rem; }
-.p-6 { padding: 1.5rem; }
-.m-0 { margin: 0; }
-.w-full { width: 100%; }
-.h-full { height: 100%; }
-.absolute { position: absolute; }
-.relative { position: relative; }
-.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-.z-40 { z-index: 40; }
-.z-100 { z-index: 100; }
-.min-h-screen { min-height: 100vh; }
-.overflow-hidden { overflow: hidden; }
-
-/* Dashboard Specifics */
+/* Structure */
 header {
-  height: 4rem;
-  background-color: var(--bg-header);
+  height: 4.5rem;
+  background: rgba(10, 10, 14, 0.7);
   border-bottom: 1px solid var(--border-dim);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
-}
-
-footer {
-  height: 4rem;
-  background-color: var(--bg-header);
-  border-top: 1px solid var(--border-dim);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  z-index: 10;
 }
 
 main {
   flex: 1;
-  display: flex;
-  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  padding: 1.25rem 2rem;
   gap: 1.5rem;
   overflow: hidden;
+  height: calc(100vh - 4.5rem);
 }
 
-.webcam-container {
-  width: 440px;
-  flex-shrink: 0;
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  height: 100%;
 }
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* Animations */
+@keyframes pulse-gaze {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
+.animate-pulse-slow {
+  animation: pulse-gaze 2.5s infinite ease-in-out;
+}
+
+/* Fallback Classes */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+.grid { display: grid; }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.overflow-hidden { overflow: hidden; }
+.font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+.font-black { font-weight: 900; }
+.font-bold { font-weight: 700; }
